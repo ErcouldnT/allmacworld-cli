@@ -2,6 +2,7 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
 import { Command } from "commander";
+import chalk from "chalk";
 
 const program = new Command();
 
@@ -37,10 +38,20 @@ async function getData(searchTerm) {
       results.push(product);
     });
 
-    console.log(results);
+    showResults();
   } catch (error) {
     console.error(error.message);
   }
+}
+
+function showResults() {
+  if (!results.length) return console.log(chalk.red.bold("Empty space."));
+
+  console.log(chalk.blue.bold("Top " + results.length + " product(s):"));
+  results.forEach((product, i) => {
+    console.log(chalk.greenBright(`${i + 1}. ${product.name}`));
+    console.log(chalk.blueBright(`${product.url}`));
+  });
 }
 
 program.parse();
