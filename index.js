@@ -22,32 +22,35 @@ async function getData(searchTerm) {
       },
     });
 
-    const $ = cheerio.load(response.data);
-
-    $("div.post-listing article").each((i, e) => {
-      const productDiv = $(e).find("h2 a");
-
-      const productName = productDiv.text().trim();
-      const productPage = productDiv.attr("href").trim();
-
-      const product = {
-        name: productName,
-        url: productPage,
-      };
-
-      results.push(product);
-    });
-
+    scrapeData(response.data);
     showResults();
   } catch (error) {
-    console.error(error.message);
+    console.error(chalk.red.bold(error.message));
   }
 }
 
-function showResults() {
-  if (!results.length) return console.log(chalk.red.bold("Empty space."));
+function scrapeData(html) {
+  const $ = cheerio.load(html);
 
-  console.log(chalk.blue.bold("Top " + results.length + " product(s):"));
+  $("div.post-listing article").each((i, e) => {
+    const productDiv = $(e).find("h2 a");
+
+    const productName = productDiv.text().trim();
+    const productPage = productDiv.attr("href").trim();
+
+    const product = {
+      name: productName,
+      url: productPage,
+    };
+
+    results.push(product);
+  });
+}
+
+function showResults() {
+  if (!results.length) return console.log(chalk.red.bold("No results found."));
+
+  console.log(chalk.yellow.bold("Top " + results.length + " product(s):"));
   results.forEach((product, i) => {
     console.log(chalk.greenBright(`${i + 1}. ${product.name}`));
     console.log(chalk.blueBright(`${product.url}`));
