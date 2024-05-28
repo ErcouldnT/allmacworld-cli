@@ -3,13 +3,19 @@ import axios from "axios";
 import * as cheerio from "cheerio";
 import { Command } from "commander";
 import chalk from "chalk";
+import open from "open";
 
 const program = new Command();
 
 program
   .command("search <product>")
-  .description("try to find given product in allmacworld.co")
+  .description("search and list the results")
   .action(getData);
+
+program
+  .command("open <product>")
+  .description("go to first product found in allmacworld.co")
+  .action(openFirst);
 
 const URL = "https://allmacworld.co/"; // https://allmacworld.co/?s=logic+pro
 const results = [];
@@ -27,6 +33,11 @@ async function getData(searchTerm) {
   } catch (error) {
     console.error(chalk.red.bold(error.message));
   }
+}
+
+async function openFirst(product) {
+  await getData(product);
+  await open(results[0].url);
 }
 
 function scrapeData(html) {
