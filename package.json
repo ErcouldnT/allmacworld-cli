@@ -5,6 +5,9 @@
   "author": "Ercode Techoglu <ercode@pm.me>",
   "license": "MIT",
   "type": "module",
+  "bin": {
+    "allmacworld": "./index.js"
+  },
   "scripts": {
     "dev": "nodemon",
     "start": "node index.js"

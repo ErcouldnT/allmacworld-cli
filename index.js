@@ -1,16 +1,23 @@
+#! /usr/bin/env node
 import axios from "axios";
 import * as cheerio from "cheerio";
+import { Command } from "commander";
+
+const program = new Command();
+
+program
+  .command("search <product>")
+  .description("try to find given product in allmacworld.co")
+  .action(getData);
 
 const URL = "https://allmacworld.co/"; // https://allmacworld.co/?s=logic+pro
-const SEARCH_TERM = "logic pro";
-
 const results = [];
 
-async function getData() {
+async function getData(searchTerm) {
   try {
     const response = await axios.get(URL, {
       params: {
-        s: SEARCH_TERM,
+        s: searchTerm,
       },
     });
 
@@ -24,7 +31,7 @@ async function getData() {
 
       const product = {
         name: productName,
-        link: productPage,
+        url: productPage,
       };
 
       results.push(product);
@@ -36,4 +43,4 @@ async function getData() {
   }
 }
 
-getData();
+program.parse();
